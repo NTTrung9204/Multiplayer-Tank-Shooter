@@ -1,0 +1,273 @@
+<link rel="stylesheet" href="/css/profile.css">
+<div id="modal-backdrop"></div>
+<div id="popup__change-avatar">
+    <div class="popup__header">
+        <p>Thay đổi ảnh đại diện</p>
+    </div>
+    <div class="popup__content">
+        <button class="upload-photos">
+            <p>Tải ảnh lên</p>
+        </button>
+        <button class="remove-current-photos">
+            <p>Gỡ ảnh hiện tại</p>
+        </button>
+        <button class="cancel" onclick="toggle()">
+            <p>Hủy</p>
+        </button>
+        <form id="uploadForm" action="profile/upload" enctype="multipart/form-data" method="POST">
+            <input accept="image/jpeg,image/png" name="avatar" class="fileInput" type="file"
+                onchange="changeImage(event)">
+        </form>
+    </div>
+</div>
+
+<div id="popup__listfriend">
+    <div class="popup__listfriend--header">
+        <p>Danh sách bạn bè</p>
+        <a onclick="toggle()">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="popup__listfriend--content">
+        <div class="search-friend">
+            <div class="searchContainer">
+                <img src="/img/svg/search.svg" alt="search-icon">
+                <input type="text" placeholder="Tìm kiếm">
+            </div>
+        </div>
+        <div class="listfriend">
+            <div class="friend">
+                <div class="avatar">
+                    <img src="/img/Alice.jpg" alt="Friend-avatar" class="friend__avatar-image">
+                </div>
+                <div class="name">
+                    <p class="friend__username">trungnguyen</p>
+                    <p class="realname">Trung Nguyễn</p>
+                </div>
+                <div class="controlButton">
+                    <button>Thêm bạn</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="profile">
+    <div class="profile__header">
+        <h2 class="header__title">My profile</h2>
+    </div>
+    <div class="profile__content">
+        <div class="profile__content--left">
+            <div class="profile__info">
+                <div class="profile__avatar">
+                    <div class="icon">
+                        <img src="{{avatar}}" alt="Avatar" class="profile__avatar-image">
+                        {{#if isOwner}}
+                        <img src="/img/svg/camera.svg" alt="camera-icon" class="profile__camera-icon"
+                            onclick="changeAvatar()">
+                        {{/if}}
+                    </div>
+                    <p class="profile__level">Level {{level}}</p>
+                </div>
+                <div class="profile__details">
+                    <p class="profile__username">[{{userName}}]</p>
+                    <p class="profile__realname">Tên:<span>{{lastname}} {{firstname}}</span></p>
+                    <p class="profile__friends" onclick="viewListFriend()">Bạn bè :<span
+                            class=" numberOfFriends">{{numberOfFriends}}</span> </p>
+                </div>
+            </div>
+            <div class=" profile__battle-history">
+                <div class="profile__history-header">
+                    <h3 class="profile__history-title">Lịch sử trận đấu</h3>
+                    <img src="/img/svg/sword.svg" alt="sword-icon">
+                    <p class="profile__battles-count">129</p>
+                </div>
+                <div class="profile__history-content">
+                    <table class="profile__history-table">
+                        <thead>
+                            <tr>
+                                <th>Kết quả</th>
+                                <th>Kills</th>
+                                <th>Hình thức</th>
+                                <th>Map</th>
+                                <th>Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="profile__result profile__result--victory">VICTORY</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--defeat">DEFEAT</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--victory">VICTORY</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--victory">VICTORY</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--defeat">DEFEAT</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--defeat">DEFEAT</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                            <tr>
+                                <td class="profile__result profile__result--victory">VICTORY</td>
+                                <td><img src="/img/svg/skull.svg" alt="skull-icon"><span>2</span> </td>
+                                <td>Đấu đội</td>
+                                <td>Sa mạc</td>
+                                <td>10:04</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile__content--right">
+            <div class="profile__content-top">
+                <div class="profile__stats">
+                    <div class="profile__reputation">
+                        <img src="/img/svg/heart.svg" alt="heart-icon"><span>Uy tín: 100</span>
+                    </div>
+                    <div class="profile__rank">
+                        <img src="/img/svg/badge.svg" alt="badge-icon"><span>Rank: 1200</span>
+                    </div>
+                </div>
+                {{#if (notAnd isOwner isFriend)}}
+                <button class="profile__add-friend" onclick="addFriend(" {{user_id}}")">Thêm bạn</button>
+                {{/if}}
+                <div class="profile__social">
+                    <div class="profile__social-icon profile__social-icon--facebook">
+                        <img src="/img/svg/facebook.svg" alt="facebook-icon">
+                    </div>
+                    <div class="profile__social-icon profile__social-icon--gmail">
+                        <img src="/img/svg/gmail.svg" alt="gmail-icon">
+                    </div>
+                </div>
+            </div>
+            <div class="profile__bio">
+                <div class="profile__bio-header">
+                    <h3 class="profile__bio-title">Tiểu sử</h3>
+                </div>
+                <div class="profile__bio-content">
+                    <p>...</p>
+                </div>
+            </div>
+        </div>
+        <div class="list-friend">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const user_id = "{{user_id}}";
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const popupChangeAvatar = document.getElementById('popup__change-avatar');
+    const popupListFriend = document.getElementById('popup__listfriend');
+    const uploadButton = document.querySelector('.upload-photos');
+    const removeButton = document.querySelector('.remove-current-photos');
+    const cancelButton = document.querySelector('.cancel');
+    const fileInput = document.querySelector('.fileInput');
+    const uploadForm = document.getElementById('uploadForm');
+
+    function toggle() {
+        modalBackdrop.classList.remove('is-active');
+        popupChangeAvatar.classList.remove('is-active');
+        popupListFriend.classList.remove('is-active');
+    }
+
+    function changeAvatar() {
+        modalBackdrop.classList.add('is-active');
+        popupChangeAvatar.classList.add('is-active');
+    }
+
+    uploadButton.addEventListener('click', function () {
+        fileInput.click();
+    });
+
+    removeButton.addEventListener('click', function () {
+
+    });
+
+    function changeImage(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                var src = e.target.result;
+                document.querySelector('.profile__avatar-image').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+        uploadForm.submit();
+
+    }
+
+    async function viewListFriend() {
+        console.log("id:", user_id);
+        const listfriend = await getFetchApi('/api/friends/' + user_id);
+
+        modalBackdrop.classList.add('is-active');
+        popupListFriend.classList.add('is-active');
+
+        const friendListDivTag = document.querySelector('.listfriend');
+        friendListDivTag.innerHTML = '';
+
+        listfriend.forEach(friend => {
+            friendListDivTag.innerHTML += `
+            <div class="friend" user_id="${friend._id}" >
+                <div class="avatar">
+                    <img src="/img/uploads/avatar/${friend.avatar}" alt="Friend-avatar" class="friend__avatar-image" onclick=goProfile('${friend.username}')>
+                </div>
+                <div class="name">
+                    <p class="friend__username"  onclick=goProfile('${friend.username}')>${friend.username}</p>
+                    <p class="realname">${friend.firstname} ${friend.lastname}</p>
+                </div>
+                <div class="controlButton">
+                    <button>Thêm bạn</button>
+                </div>
+            </div>
+            `;
+        });
+    }
+
+    function addFriend(user_id) {
+
+    }
+
+    function goProfile(username) {
+        window.location.href = `/profile/${username}`;
+    }
+    window.onclick = function (event) {
+        if (event.target == modalBackdrop) {
+            toggle();
+        }
+    }
+</script>

@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="/css/setting.css">
+<div class="main__title">
+    <h2>Chọn chế độ chơi</h2>
+    <button id="save__mode">Lưu</button>
+</div>
+<div class="option">
+    <input {{#if isRotateMode}} checked="true" {{/if}} value="rotateMode" type="radio" name="mode" id="rotate-mode">
+    <label for="rotate-mode">Chế độ xoay</label>
+    <div class="details">
+        <div class="bracket left"></div>
+        <div class="bracket right"></div>
+        <div class="keys">A: xoay sang trái</div>
+        <div class="keys">D: xoay sang phải</div>
+        <div class="keys">W: đi lên</div>
+        <div class="keys">S: đi lùi</div>
+    </div>
+    <span>
+        (Di chuyển đa dạng)
+    </span>
+    <div class="icon">
+        <img src="/img/rotate_mode.png" alt="Icon Chế độ xoay">
+    </div>
+</div>
+
+<!-- Chế độ tự do -->
+<div class="option">
+    <input {{#if isFreeMode}} checked="true" {{/if}} value="freeMode" type="radio" name="mode" id="free-mode">
+    <label for="free-mode">Chế độ tự do</label>
+    <div class="details">
+        <div class="bracket left"></div>
+        <div class="bracket right"></div>
+        <div class="keys">A: đi sang trái</div>
+        <div class="keys">D: đi sang phải</div>
+        <div class="keys">W: đi lên</div>
+        <div class="keys">S: đi lùi</div>
+        <div class="keys">ADWS: đi hướng chéo</div>
+    </div>
+    <span>
+        (Di chuyển linh hoạt)
+    </span>
+    <div class="icon">
+        <img src="/img/free_mode.png" alt="Icon Chế độ tự do">
+    </div>
+</div>
+<script src="/js/settings.js"></script>

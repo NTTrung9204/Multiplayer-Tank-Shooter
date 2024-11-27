@@ -1,0 +1,889 @@
+.teamMatch__body {
+    display: flex;
+    justify-content: space-between;
+
+    &__side {
+        flex: 1;
+
+        &__team {
+            display: flex;
+            align-items: center;
+
+            &__logo {
+                width: 75px;
+                height: 75px;
+                border-radius: 5px;
+                margin: 0 20px;
+            }
+
+            &__name {
+                font-size: 2.5rem;
+                font-weight: 700;
+            }
+        }
+
+        &__players {
+
+            &__item--active {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                padding: 10px;
+                border: 2px solid #000;
+                border-radius: 5px;
+                margin: 10px 0;
+                cursor: pointer;
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 5px;
+                    position: absolute;
+                    top: 50%;
+                    left: 10px;
+                    transform: translateY(-50%);
+                }
+
+                &__name {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    margin-left: 60px;
+                }
+
+                &__level {
+                    font-size: 1rem;
+                    font-weight: lighter;
+                    margin-left: 60px;
+                    color: #999;
+                }
+
+                .ready__icon {
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    font-size: xx-large;
+                    color: #6CD928;
+                }
+            }
+
+            &__item--waitting {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background: linear-gradient(270deg, #444, #666, #888);
+                padding: 10px;
+                border: 2px solid #000;
+                border-radius: 5px;
+                height: 64px;
+                overflow: hidden;
+                margin: 10px 0;
+                cursor: pointer;
+
+                .players__item__waiting__animation {
+                    position: absolute;
+                    top: 0;
+                    left: -50%;
+                    width: 200%;
+                    height: 100%;
+                    background: linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 60%);
+                    animation: waveBackground 2s infinite linear;
+                }
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    left: 10px;
+                    transform: translateY(-50%);
+                }
+
+                &__text {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    color: #999;
+                }
+
+                @keyframes waveBackground {
+                    0% {
+                        left: -200%;
+                    }
+
+                    100% {
+                        left: 100%;
+                    }
+
+                }
+            }
+        }
+    }
+
+    &__center {
+        flex: 0.7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+
+        img {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+
+        }
+
+        &__img__shadow {
+            width: 200px;
+            height: 66px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, calc(-50% + 40px));
+            background-color: #D9D9D9;
+            border-radius: 50%;
+            z-index: 0;
+        }
+    }
+}
+
+.teamMatch__footer {
+    display: flex;
+    height: 160px;
+    margin-top: 10px;
+
+    &__chatbox {
+        flex: 2;
+        border: 2px solid #000;
+        border-radius: 5px;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    &__control {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        &__chat {
+            display: flex;
+
+            &__input {
+                // flex: 1;
+                width: 250px;
+                padding: 5px;
+                border: 2px solid #000;
+                border-radius: 5px;
+                height: 40px;
+                // line-height: 35px;
+                font-size: 20px;
+            }
+
+            &__send {
+                all: unset;
+                width: 40px;
+                height: 40px;
+                position: relative;
+                margin-left: 20px;
+                border: 2px solid #CD5C5C;
+                border-radius: 50%;
+                transition: all 0.3s;
+
+                i {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 1.5rem;
+                    color: #000;
+                    transition: all 0.3s;
+                }
+
+                &:hover {
+                    background-color: #CD5C5C;
+                    cursor: pointer;
+                }
+
+                &:hover i {
+                    color: #fff;
+                }
+            }
+        }
+
+        &__button {
+            all: unset;
+            padding: 20px 80px;
+            border: 2px solid #CD5C5C;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            &:hover {
+                background-color: #CD5C5C;
+            }
+        }
+
+
+
+
+    }
+}
+
+.mode__button__control {
+    &--ready {
+        position: relative;
+
+        &::after {
+            content: 'Sẵn sàng';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    }
+
+    &--cancel {
+        position: relative;
+
+        &::after {
+            content: 'Hủy';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    }
+
+    &--start {
+        position: relative;
+
+        &::after {
+            content: 'Bắt đầu';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    }
+
+    &--back {
+        position: relative;
+
+        &::after {
+            content: 'Back';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    }
+}
+
+.transition-out {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    display: flex;
+    overflow: hidden;
+}
+
+.transition-out__left {
+    position: absolute;
+    background-color: #292C2F;
+    border-radius: 10px 0 0 10px;
+    width: 50%;
+    height: 100%;
+    left: -100%;
+    transition: 1s ease-out;
+}
+
+.transition-out__left.is-active {
+    left: 0;
+}
+
+.transition-out__right {
+    position: absolute;
+    border-radius: 0 10px 10px 0;
+    height: 100%;
+    background-color: #292C2F;
+    width: 50%;
+    right: -100%;
+    transition: 1s ease-out;
+}
+
+.transition-out__right.is-active {
+    right: 0;
+}
+
+.transition-in {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -100;
+    display: flex;
+    overflow: hidden;
+}
+
+.transition-in__left {
+    position: absolute;
+    background-color: #292C2F;
+    border-radius: 10px 0 0 10px;
+    width: 50%;
+    height: 100%;
+    left: 0;
+    transition: 1s ease-out;
+}
+
+.transition-in__left.is-active {
+    left: -100%;
+}
+
+.transition-in__right {
+    position: absolute;
+    border-radius: 0 10px 10px 0;
+    height: 100%;
+    background-color: #292C2F;
+    width: 50%;
+    right: 0;
+    transition: 1s ease-out;
+}
+
+.transition-in__right.is-active {
+    right: -100%;
+}
+
+
+
+
+.transition-in .progress-bar {
+    position: relative;
+    height: 26px;
+    width: 30%;
+    left: 50%;
+    top: 50%;
+    border: 5px solid #0d4163;
+    background-color: #ccc;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: none;
+    border-radius: 13px;
+}
+
+.transition-in .progress-bar::before {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    content: '';
+    height: 100%;
+    width: calc(var(--width, 0) * 1%);
+    border-radius: 8px;
+    min-width: 16px;
+    max-width: 100%;
+    background-image: linear-gradient( 45deg, #30cfd0 0%, #330867 100%);
+}
+
+.chatInfo {
+    margin-top: -5px;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.Info img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.receiver {
+    margin-right: 50%;
+    align-self: flex-start;
+}
+
+.sender {
+    float: right;
+    margin-left: 50%;
+    align-self: flex-end;
+}
+
+.received {
+    align-self: flex-start;
+    background-color: #c3e9e9;
+    margin-right: 70%;
+}
+
+.sent {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    margin-left: 70%;
+    display: flex;
+}
+
+.message p {
+    margin: 0;
+    font-size: 14px;
+    word-break: break-word;
+    flex-grow: 4;
+}
+
+.time {
+    display: block;
+    font-size: 11px;
+    text-align: right;
+    color: #777;
+}
+
+.disconnection {
+    text-align: center;
+}
+
+.disconnection p {
+    left: 0;
+    right: 0;
+}
+
+.teamMatch__body__center__map {
+    position: absolute;
+    bottom: 10%;
+    cursor: pointer;
+}
+
+.teamMatch__body__center__map #map {
+    padding: 20px 0;
+    background-repeat: no-repeat;
+    padding-left: 75px;
+    background-size: 50px;
+
+}
+
+.teamMatch__body__center .teamMatch__body__center__swap {
+    position: absolute;
+    top: 10%;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    text-shadow: 2px 4px 1px #9e30a9, 2px 2px 1px #4090b5, 0 0 20px rgba(255, 255, 255, 0.616);
+}
+
+
+.teamMatch__body__center__map span {
+    //chưa lưu
+    --headerText: #97033c;
+    --highlighterThree: #ffcfb2;
+    //
+    font-family: kirupapixel;
+    color: var(--headerText);
+    text-shadow: 1px 1px var(--highlighterThree);
+    -webkit-font-smoothing: none;
+    font-size: 30px;
+    font-weight: 800;
+
+}
+
+#modal-backdrop {
+    pointer-events: none;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    border-radius: 10px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0;
+    top: 0;
+    transition: 0.3s ease-out;
+}
+
+#modal-backdrop.is-active {
+    pointer-events: all;
+    cursor: pointer;
+    opacity: 0.4;
+    z-index: 100;
+}
+
+#map-selection {
+    pointer-events: none;
+
+    // display: none;
+    margin-top: 20px;
+    position: absolute;
+    width: 800px;
+    height: 520px;
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    transition: 0.3s ease-out;
+
+}
+
+#map-selection.is-active {
+    opacity: 1;
+    pointer-events: all;
+    cursor: pointer;
+    z-index: 101;
+}
+
+#map-selection .row-1 {
+    position: relative;
+}
+
+#map-selection .row-1 a {
+    color: inherit;
+    position: absolute;
+    top: 10%;
+    right: -7px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    padding: 3px 6px;
+}
+
+#map-selection .row-1 a:hover {
+    border: 2px solid #e63030;
+    color: #e63030;
+}
+
+#map-selection .row-1 i {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.slide .name {
+    text-align: center;
+    font-weight: bold;
+    margin-top: -35px;
+    padding-bottom: 10px;
+    font-size: 20px;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    border: 2px solid red;
+}
+
+#map-selection .row-2 {
+    position: absolute;
+    width: 600px;
+    height: 300px;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    display: flex;
+    flex-direction: column;
+}
+
+.slideshow-container {
+    border-radius: 5px;
+    position: relative;
+}
+
+.input-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+
+.slide {
+    display: none;
+}
+
+#selection-btn {
+    position: absolute;
+    left: 50%;
+    display: flex;
+    transform: translateX(-50%);
+    padding: 10px 12px;
+    background-color: #007ACC;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+}
+
+#selection-btn:hover {
+    cursor: pointer;
+    background-color: #065a93;
+}
+
+#selection-btn span {
+    padding-right: 10px;
+}
+
+.prev,
+.next {
+    cursor: pointer;
+    padding: 4px 7px;
+    background-color: #ccc;
+    border-radius: 50%;
+    position: absolute;
+    top: 60%;
+    transform: translateY(-60%);
+    font-weight: bold;
+}
+
+.prev:hover,
+.next:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.next {
+    right: 0;
+    margin-right: 4px;
+}
+
+.prev {
+    margin-left: 4px;
+}
+
+.prev i,
+.next i {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#show__infor__user{
+    width: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    z-index: 101;
+    transition: all 0.3s ease;
+
+    .infor__user{
+        display: flex;
+
+        &__avatar{
+            width: 50px;
+            height: 50px;
+            border-radius: 2px;
+            margin-right: 10px;
+        }
+
+        &__name__and_level{
+            display: flex;
+            flex-direction: column;
+
+            &--name{
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+
+            &--level{
+                font-size: 1rem;
+                font-weight: lighter;
+                color: #999;
+            }
+        }
+    }
+
+    .show__infor__button{
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+
+        &__kick{
+            padding: 10px 20px;
+            background-color: #EB5757;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng chuyển màu */
+
+            &:hover{
+                background-color: #FF0000;
+            }
+        }
+
+        &__add__friend{
+            padding: 10px 20px;
+            background-color: #6CD928;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng chuyển màu */
+
+            &:hover{
+                background-color: #4CAF50;
+            }
+        }
+    }
+
+}
+
+// inviteFriend.scss
+$container-width: 750px;
+$container-height: 400px;
+$primary-color: #007bff;
+$hover-color: #0056b3;
+$background-color: #f9f9f9;
+$gray-color: #ccc;
+$gray-text-color: #666;
+$red-color: #ff4d4d;
+$dark-red-color: #ff1a1a;
+
+.container__invite-friend {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $container-width;
+    height: $container-height;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    background-color: $background-color;
+    transition: all 0.25s ease;
+    z-index: -1;
+    transform: scale(0) translate(-50%, -50%);
+    opacity: 0;
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: $red-color;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 25px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: $dark-red-color;
+        }
+    }
+
+    .tab-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        background-color: #f1f1f1;
+        padding: 10px;
+        justify-content: flex-start; // căn trái
+        border-bottom: 2px solid #ccc;
+        gap: 10px;
+
+        .tab {
+            padding: 10px 20px;
+            font-weight: bold;
+            color: black;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+
+            &.active {
+                background-color: $primary-color;
+                color: white;
+                box-shadow: 0px 4px 6px rgba(0, 123, 255, 0.3);
+            }
+        }
+    }
+
+    .tab-content {
+        display: none;
+        padding: 20px;
+        background-color: white;
+        height: 310px;
+        overflow-y: auto;
+        transition: opacity 0.3s ease;
+
+        &.active {
+            display: block;
+            opacity: 1;
+        }
+    }
+
+    .friend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #f7f7f7;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+
+        &:hover {
+            transform: scale(1.03);
+            background-color: #e9f0ff;
+        }
+
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid $primary-color;
+        }
+
+        .invite-button {
+            margin-left: auto;
+            padding: 5px 15px;
+            background-color: $primary-color;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+
+            &:hover {
+                background-color: $hover-color;
+                transform: scale(1.05);
+            }
+
+            &.disabled {
+                background-color: $gray-color;
+                cursor: not-allowed;
+                color: $gray-text-color;
+            }
+        }
+    }
+}

@@ -1,0 +1,159 @@
+<link rel="stylesheet" href="/css/createLayout.css">
+
+<div class="main">
+    <div class="top-section">
+        <input type="text" id="mapName" placeholder="Đặt tên bản đồ..." required>
+    </div>
+    <div id="containerMap">
+        <div id="container"></div>
+        <div class="controls-section">
+            <ul class="controls">
+                <li><button id="createMapBtn">Tạo bản đồ</button></li>
+                <li><button id="obstacleBtn">Chọn chướng ngại vật</button></li>
+                <li><button id="dogBtn">Chọn vị trí team Dog</button></li>
+                <li><button id="catBtn">Chọn vị trí team Cat</button></li>
+            </ul>
+        </div>
+    </div>
+    <form id="createMap" action="" method="POST"></form>
+</div>
+
+<script>
+    const container = document.getElementById('container');
+    const obstacleBtn = document.getElementById('obstacleBtn');
+    const dogBtn = document.getElementById('dogBtn');
+    const catBtn = document.getElementById('catBtn');
+    const createMapBtn = document.getElementById('createMapBtn');
+    const buttons = [obstacleBtn, dogBtn, catBtn];
+    const form = document.getElementById('createMap');
+
+    let mode = '';
+    let dogElement, catElement;
+    let obstacles = [];
+
+    // Khi tải trang, khởi tạo team Dog và Cat mặc định
+    window.onload = () => {
+        createInitialMap();  // Gọi hàm tạo bản đồ mặc định
+    };
+
+    function setActiveButton(button) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+    }
+
+    function createInitialTeam(id, pos) {
+        const elem = document.createElement('div');
+        elem.id = id;
+        elem.style.left = pos.x + 'px';
+        elem.style.top = pos.y + 'px';
+        container.appendChild(elem);
+        return elem;
+    }
+
+    // Hàm tạo bản đồ ban đầu (với các ô vuông) và đặt vị trí mặc định cho team Dog, Cat
+    function createInitialMap() {
+        // Tạo lưới các ô vuông 25x25
+        for (let i = 0; i < 800; i++) {
+            const square = document.createElement('div');
+            square.classList.add('square');
+            square.addEventListener('click', () => handleSquareClick(square));
+            container.appendChild(square);
+        }
+
+        // Khởi tạo team Dog và Cat mặc định ở 2 góc
+        dogElement = createInitialTeam('dog', { x: 0, y: 0 });
+        catElement = createInitialTeam('cat', { x: 850, y: 350 }); // Đặt ở góc dưới bên phải
+    }
+
+    // Xử lý khi bấm vào từng ô vuông
+    function handleSquareClick(square) {
+        if (mode === 'obstacle') {
+            // Nếu ô đã chọn làm chướng ngại vật thì bỏ chọn
+            if (square.style.backgroundColor === 'black') {
+                square.style.backgroundColor = '';
+                const index = obstacles.findIndex(obs => obs === square);
+                if (index !== -1) obstacles.splice(index, 1);
+            } else {
+                square.style.backgroundColor = 'black';
+                obstacles.push(square);  // Lưu vị trí chướng ngại vật
+            }
+        } else if (mode === 'dog') {
+            moveTeam(dogElement, square);
+        } else if (mode === 'cat') {
+            moveTeam(catElement, square);
+        }
+    }
+
+    // Hàm di chuyển team Dog hoặc Cat
+    function moveTeam(teamElement, square) {
+        const pos = getPosition(square);
+
+        // Xử lý khi team không bị tràn ra ngoài khung
+        const maxX = container.offsetWidth - teamElement.offsetWidth;
+        const maxY = container.offsetHeight - teamElement.offsetHeight;
+        const clampedX = Math.min(pos.x, maxX);
+        const clampedY = Math.min(pos.y, maxY);
+
+        teamElement.style.left = clampedX + 'px';
+        teamElement.style.top = clampedY + 'px';
+    }
+
+    // Lấy tọa độ của ô vuông và làm tròn xuống
+    function getPosition(square) {
+        const rect = square.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const x = Math.floor(rect.left - containerRect.left);
+        const y = Math.floor(rect.top - containerRect.top);
+        return { x, y };
+    }
+
+
+    // Gán sự kiện khi bấm nút
+    obstacleBtn.addEventListener('click', () => {
+        mode = 'obstacle';
+        setActiveButton(obstacleBtn);
+    });
+
+    dogBtn.addEventListener('click', () => {
+        mode = 'dog';
+        setActiveButton(dogBtn);
+    });
+
+    catBtn.addEventListener('click', () => {
+        mode = 'cat';
+        setActiveButton(catBtn);
+    });
+
+    // Xử lý khi nhấn "Tạo bản đồ" mà không reset bản đồ, chỉ gửi dữ liệu
+    createMapBtn.addEventListener('click', () => {
+        submitMapData();  // Gọi hàm submit dữ liệu mà không reset
+    });
+
+    // Hàm Submit để gửi thông tin
+    function submitMapData() {
+        const dogPosition = getPosition(dogElement);
+        const catPosition = getPosition(catElement);
+        const obstaclePositions = obstacles.map(square => getPosition(square));
+        const mapName = document.getElementById('mapName').value;
+
+        const mapData = {
+            dogPosition: dogPosition,
+            catPosition: catPosition,
+            obstacles: obstaclePositions,
+            mapName: mapName
+        };
+
+        console.log('Thông tin bản đồ:', mapData);
+
+        // Gửi dữ liệu thông qua form
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'mapData';
+        input.value = JSON.stringify(mapData);
+        form.appendChild(input);
+        form.submit();
+    }
+
+
+
+</script>

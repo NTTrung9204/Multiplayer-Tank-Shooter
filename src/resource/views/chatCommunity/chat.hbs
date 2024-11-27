@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="/css/chatCommunity.css">
+
+<div class="chat-community">
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const user_id = '{{user_id}}';
+
+    fetch('/api/chatCommunity')
+        .then(res => res.json())
+        .then(messages => {
+            const messagesDiv = document.getElementById('messages');
+            messages.forEach(message => {
+                displayMessage(message);
+            });
+        });
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+
+        if (message) {
+            socket.emit('ChatCommunity__sendMessage__Server', { message, user_id });
+            messageInput.value = '';
+        }
+    }
+
+    function displayMessage(message) {
+        const messagesDiv = document.getElementById('messages');
+        const msgElement = document.createElement('div');
+        msgElement.classList.add('message');
+        msgElement.innerHTML = `
+        <div class="message-content">
+          <img class="avatar" src="/img/uploads/avatar/${message.avatar}" alt="${message.username} Avatar">
+          <div class="message-details">
+            <div class="header">
+              <span class="sender-name">${message.username}</span>
+              <span class="timestamp">${message.time}</span>
+            </div>
+            <div class="message-text">${message.message}</div>
+          </div>
+        </div>
+      `;
+        if (message.user_id === user_id) {
+            msgElement.classList.add('self-message');
+        } else {
+            msgElement.classList.add('other-message');
+        }
+        messagesDiv.appendChild(msgElement);
+    }
+
+    socket.on('Server__sendMessage__ChatCommunity', (message) => {
+        displayMessage(message);
+    });
+</script>

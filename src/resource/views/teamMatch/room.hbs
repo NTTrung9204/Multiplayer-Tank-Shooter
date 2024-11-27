@@ -1,0 +1,982 @@
+<link rel="stylesheet" href="/css/roomTeamMatch.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
+    integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="transition-out">
+    <div class="transition-out__left is-active"></div>
+    <div class="transition-out__right is-active"></div>
+</div>
+
+<div class="transition-in">
+    <div class="transition-in__left is-active"></div>
+    <div class="transition-in__right is-active"></div>
+    <div class="progress-bar" style="--width: 5"></div>
+</div>
+
+<div id="teamMatch">
+    <div class="teamMatch__body">
+        <div class="teamMatch__body__side">
+            <div class="teamMatch__body__side__team">
+                <img src="/img/dog.png" alt="" class="teamMatch__body__side__team__logo">
+                <span class="teamMatch__body__side__team__name">
+                    Liên Minh
+                </span>
+            </div>
+            <div class="teamMatch__body__side__players">
+
+
+            </div>
+        </div>
+        <div class="teamMatch__body__center">
+            <a class="teamMatch__body__center__swap" onclick="swapTeam()">
+                <i class="fa-solid fa-repeat"></i>
+            </a>
+            <img class="teamMatch__img" src="/img/teamMatch.png" alt="">
+            <div class="teamMatch__body__center__img__shadow">
+
+            </div>
+            <div class="teamMatch__body__center__map">
+
+            </div>
+        </div>
+        <div class="teamMatch__body__side">
+            <div class="teamMatch__body__side__team">
+                <img src="/img/cat.png" alt="" class="teamMatch__body__side__team__logo">
+                <span class="teamMatch__body__side__team__name">
+                    Phiến Quân
+                </span>
+            </div>
+            <div class="teamMatch__body__side__players">
+
+            </div>
+        </div>
+    </div>
+    <div class="teamMatch__footer">
+        <div class="teamMatch__footer__chatbox">
+
+        </div>
+        <div class="teamMatch__footer__control">
+            <div class="teamMatch__footer__control__chat">
+                <input placeholder="Chat..." class="teamMatch__footer__control__chat__input"></input>
+                <button class="teamMatch__footer__control__chat__send" onclick="sendMessages()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <button id="controlGame" onclick="readyAndStart(event)"
+                class="teamMatch__footer__control__button mode__button__control--ready">
+
+            </button>
+            <button class="teamMatch__footer__control__button mode__button__control--back"
+                onclick="exitRoom()"></button>
+        </div>
+    </div>
+</div>
+{{!--LỚP MỜ --}}
+<div id="modal-backdrop"></div>
+{{!--POPUP THAY ĐỔI MAP --}}
+<div id="map-selection">
+    <div class="row-1">
+        <a onclick="toggle()">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="row-2">
+        <div id="chooseMap" class="slideshow-container">
+            {{!-- {{#each listmap}}
+            <div class="slide">
+                <div class="name">{{this.name}}</div>
+                <img src="/img/slide/{{this.chart}}" alt="">
+            </div>
+            {{/each}} --}}
+
+            <a class="prev" onclick="plusSlides(-1)"><i class="fa-solid fa-angle-left"></i></a>
+            <a class="next" onclick="plusSlides(1)"><i class="fa-solid fa-angle-right"></i></a>
+        </div>
+        <div class="input-container">
+
+            <button id="selection-btn" onclick="selectMap()"><span class="fa-regular fa-map"></span>Chọn</button>
+        </div>
+    </div>
+</div>
+
+<div class="container__invite-friend" id="tabContainer">
+    <!-- Close button -->
+    <button class="close-button" onclick="closeContainer()">×</button>
+
+    <div class="tab-container">
+        <div class="tab active" onclick="openTab('lobby')">Sảnh</div>
+        <div class="tab" onclick="openTab('friends')">Bạn bè</div>
+    </div>
+
+    <div id="lobby" class="tab-content active">
+        <p>Danh sách người trong sảnh...</p>
+        <!-- Nội dung Sảnh sẽ ở đây -->
+    </div>
+
+    <div id="friends" class="tab-content">
+        <div class="friend-item">
+            <img src="dog_avatar.png" alt="Avatar">
+            <div>
+                <strong>DungVan17</strong><br>
+                Level: 1
+            </div>
+            <button class="invite-button" onclick="inviteFriend(this)">Mời</button>
+        </div>
+        <div class="friend-item">
+            <img src="dog_avatar.png" alt="Avatar">
+            <div>
+                <strong>DungVan17</strong><br>
+                Level: 1
+            </div>
+            <button class="invite-button" onclick="inviteFriend(this)">Mời</button>
+        </div>
+        <!-- Các bạn khác sẽ ở đây -->
+    </div>
+</div>
+
+<script src="/js/engineGameClient.js"></script>
+
+<script>
+    const user_id = "{{user_id}}";
+    const room_id = "{{id_room}}";
+    const movementMode = "{{movementMode}}";
+    var user_role;
+    const canvas = document.createElement('canvas');
+    canvas.id = "canvas";
+    canvas.width = 1000;
+    canvas.height = 500;
+    const engineGame = new Game(canvas);
+
+    var list_players_id = [];
+
+    const teamMatch = document.getElementById('teamMatch');
+    const teamMatchBody = teamMatch.querySelector('.teamMatch__body');
+    const teamMatchFooter = teamMatch.querySelector('.teamMatch__footer');
+    const teamMatchFooterControl = teamMatchFooter.querySelector('.teamMatch__footer__control');
+    const teamMatchFooterControlButton = teamMatchFooterControl.querySelector('.teamMatch__footer__control__button');
+    const teamMatchBodySidePlayers = teamMatchBody.querySelectorAll('.teamMatch__body__side__players');
+    const teamMatchFooterChatbox = teamMatchFooter.querySelector('.teamMatch__footer__chatbox');
+    const teamMatchControlChatInput = teamMatchFooterControl.querySelector('.teamMatch__footer__control__chat__input');
+    const teamMatchBodyCenterMap = teamMatchBody.querySelector('.teamMatch__body__center__map');
+    const controlGame = teamMatchFooterControl.querySelector('#controlGame');
+    const nameMap = document.querySelector('#map span');;
+    const transitionOut = document.querySelector('.transition-out');
+    const transitionIn = document.querySelector('.transition-in');
+    const progressBar = document.querySelector('.progress-bar');
+    const mainTag = document.querySelector('main');
+    const chooseMap = document.getElementById('chooseMap');
+    const sidebar = document.getElementById('sidebar');
+    const gameInfoContainer = document.getElementById('game-info-container');
+    const listMap = {{{ json listmap }}};
+
+    listMap.forEach((map, index) => {
+        const slide = document.createElement('div');
+        slide.classList.add('slide');
+        const name = document.createElement('div');
+        name.classList.add('name');
+        name.textContent = map.mapName;
+        slide.appendChild(name);
+
+        const canvas = createMapCanvas(map.dogPosition, map.catPosition, map.obstacles);
+        slide.appendChild(canvas);
+
+        slide.id = map._id;
+
+        chooseMap.appendChild(slide);
+    });
+
+    // Hàm tạo map canvas với kích thước mới
+    function createMapCanvas(dogPos, catPos, obstacles) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; // Thay đổi kích thước
+        canvas.height = 300; // Thay đổi kích thước
+        const scale = 1000 / canvas.width; // Tính tỉ lệ
+        const originalWidthObstacle = 25;
+        const originalWidthHome = 100;
+        const ctx = canvas.getContext('2d');
+
+        // Vẽ chướng ngại vật
+        obstacles.forEach(obstacle => {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(obstacle.x / scale, obstacle.y / scale, originalWidthObstacle / scale, originalWidthObstacle / scale); // Tăng kích thước
+        });
+
+        // Vẽ team Dog
+        ctx.fillStyle = '#5678F0';
+        ctx.fillRect(dogPos.x / scale, dogPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        // Vẽ team Cat
+        ctx.fillStyle = '#EB5757';
+        ctx.fillRect(catPos.x / scale, catPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        // Đặt màu đường viền
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5;
+
+        // Vẽ đường viền cho canvas
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        return canvas;
+    }
+
+    function showBoardInvite() {
+        modalBackdrop.classList.add('is-active');
+        const container = document.querySelector('.container__invite-friend');
+        container.style.zIndex = 201;
+        container.style.opacity = 1;
+        container.style.transform = 'scale(1) translate(-50%, -50%)';
+
+        const lobbyTab = document.getElementById("lobby");
+        lobbyTab.innerHTML = "Đang tải...";
+
+        const friendsTab = document.getElementById("friends");
+        friendsTab.innerHTML = "Đang tải...";
+
+        socket.emit("Room__GetListUserLobby__Server", user_id);
+    }
+
+    socket.on("Server__GetListUserLobby__Room", (listUserInLobby, listFriend) => {
+        const lobbyTab = document.getElementById("lobby");
+        fillPlayerInTab(lobbyTab, listUserInLobby, "Không có người chơi nào trong sảnh");
+
+        const friendsTab = document.getElementById("friends");
+        fillPlayerInTab(friendsTab, listFriend, "Không có bạn bè nào khả dụng");
+    })
+
+    function fillPlayerInTab(tab, listUser, placeholderText) {
+        if (!listUser.length) {
+            tab.innerHTML = placeholderText;
+            return;
+        }
+        tab.innerHTML = "";
+        listUser.forEach(user => {
+            tab.innerHTML += `
+                <div class="friend-item">
+                <#if
+                    <img src="/img/uploads/avatar/${user.avatar}" alt="Avatar">
+                    <div>
+                        <strong>${user.username}</strong><br>
+                        Level: ${user.level}
+                    </div>
+                    <button class="invite-button" onclick="inviteFriend(this, '${user.id}')">Mời</button>
+                </div>
+            `;
+        });
+    }
+
+    function openTab(tabName) {
+        // Ẩn tất cả nội dung tab
+        var contents = document.getElementsByClassName("tab-content");
+        for (var i = 0; i < contents.length; i++) {
+            contents[i].classList.remove("active");
+            contents[i].style.opacity = 0; // Đặt opacity về 0 trước khi hiển thị lại
+        }
+
+        // Xóa trạng thái active cho tất cả các tab
+        var tabs = document.getElementsByClassName("tab");
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove("active");
+        }
+
+        // Hiển thị nội dung tab được chọn và đánh dấu tab là active
+        var selectedContent = document.getElementById(tabName);
+        selectedContent.classList.add("active");
+        selectedContent.style.opacity = 1; // Hiển thị với opacity mượt
+        event.currentTarget.classList.add("active");
+    }
+
+    function closeContainer() {
+        // Ẩn container khi nhấn nút X
+        const container = document.querySelector('.container__invite-friend');
+        container.style.zIndex = -1;
+        container.style.opacity = 0;
+        container.style.transform = 'scale(0) translate(-50%, -50%)';
+
+        modalBackdrop.classList.remove('is-active');
+    }
+
+    function inviteFriend(button, invitedPlayer_id) {
+        // Thực hiện mời bạn bè
+        socket.emit("Room__InviteFriend__Server", invitedPlayer_id, user_id);
+
+        // Đổi trạng thái của nút thành "Đã mời" và vô hiệu hóa nút
+        button.innerText = "Đã mời";
+        button.classList.add("disabled");
+        button.disabled = true;
+
+        // Có thể mời lại sau 5s
+        setTimeout(() => {
+            button.innerText = "Mời";
+            button.classList.remove("disabled");
+            button.disabled = false;
+        }, 5000);
+    }
+
+    let slideIndex = 1;
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+    function sendMessages() {
+        const message = teamMatchControlChatInput.value;
+        if (!message.trim()) return;
+        socket.emit("Room__SendMessage__Server", message, user_id, room_id);
+        teamMatchControlChatInput.value = "";
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("slide");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            slides[i].setAttribute("display", "none");
+        }
+        slides[slideIndex - 1].setAttribute("display", "block");
+        slides[slideIndex - 1].style.display = "block";
+    }
+
+    showSlides(slideIndex);
+
+
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const mapSelection = document.getElementById('map-selection');
+
+    function toggle() {
+        modalBackdrop.classList.remove('is-active');
+        mapSelection.classList.remove('is-active');
+
+        const showInforUser = document.getElementById('show__infor__user');
+        showInforUser.style.opacity = 0;
+        if (showInforUser) {
+            setInterval(() => {
+                showInforUser.remove();
+            }, 500);
+        }
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modalBackdrop) {
+            toggle();
+        }
+    }
+
+    function closeView() {
+        const transitionInLeft = document.querySelector('.transition-in__left');
+        const transitionInRight = document.querySelector('.transition-in__right');
+        transitionIn.style.zIndex = '101';
+        transitionInLeft.classList.remove('is-active');
+        transitionInRight.classList.remove('is-active');
+    }
+
+    function openView() {
+        const transitionOutLeft = document.querySelector('.transition-out__left');
+        const transitionOutRight = document.querySelector('.transition-out__right');
+
+        transitionOutLeft.classList.remove('is-active');
+        transitionOutRight.classList.remove('is-active');
+    }
+
+    function changeMap() {
+        modalBackdrop.classList.add('is-active');
+        mapSelection.classList.add('is-active');
+    }
+
+    function selectMap() {
+        const map = document.querySelector(".slide[display=block]");
+        const nameMap = map.querySelector(".name").innerText;
+        const idMap = map.id;
+        socket.emit("Room__ChangeMap__Server", room_id, idMap);
+        toggle();
+    }
+
+    function swapTeam() {
+        socket.emit("Room__ChangeTeam__Server", user_id, room_id);
+    }
+
+    function sendMessages() {
+        const message = teamMatchControlChatInput.value;
+        if (!message.trim()) return;
+        socket.emit("Room__SendMessage__Server", message, user_id, room_id);
+        teamMatchControlChatInput.value = "";
+    }
+
+    teamMatchControlChatInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            sendMessages();
+        }
+    })
+
+    socket.emit("Room__ConnectToTeamMatch__Server", user_id, room_id);
+
+    socket.on("Server__ConnectToRoomFail__Room", (message) => {
+        window.location.href = "/play/lobby";
+    })
+
+    socket.on("Server__SendMessage__Room", (message, username, team, avatar) => {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        var messageElement;
+        if (username === "{{ username }}") {
+            if (team === "dog") {
+                messageElement = `
+                        <div class="chatInfo ">
+                            <div class="message sent">
+                                <p>${message}</p> 
+                                <span class="time">${time}</span>
+                            </div>
+                        </div>
+                        `;
+            } else {
+                messageElement = `
+                        <div class="chatInfo ">                       
+                            <div class="message sent">
+                                <p>${message}</p> 
+                                <span class="time">${time}</span>
+                            </div>
+                        </div>
+                        `;
+            }
+
+        } else {
+            if (team === "dog") {
+                messageElement = ` 
+                        <div class="chatInfo ">
+                            <div class="Info receiver">
+                                <img src="/img/uploads/avatar/${avatar}" alt="receiver">
+                                <span class="name"><b>${username}</b></span>
+                            </div>
+                            <div class="message received">
+                                <p>${message}</p>
+                                <span class="time">${time}</span>
+                            </div>
+                        </div>
+                        `;
+            } else {
+                messageElement = ` 
+                        <div class="chatInfo ">
+                            <div class="Info receiver">
+                                <img src="/img/uploads/avatar/${avatar}" alt="receiver">
+                                <span class="name"><b>${username}</b></span>
+                            </div>
+                            <div class="message received">
+                                <p>${message}</p>
+                                <span class="time">${time}</span>
+                            </div>
+                        </div>
+                        `;
+            }
+        }
+        teamMatchFooterChatbox.innerHTML += messageElement;
+    });
+
+    function exitRoom() {
+        window.location.href = `/play/lobby`;
+    }
+
+    socket.on("Server__ExitRoom__Room", (username, id_user) => {
+        if (id_user === user_id) {
+            window.location.href = `/play/lobby`;
+        } else {
+            var messageElement = `
+                <div class="disconnection">
+                    <p><b>${username}</b> đã rời khỏi phòng</p>
+                </div>
+         `;
+            teamMatchFooterChatbox.innerHTML += messageElement;
+        }
+    })
+
+    socket.on("Server__KickPlayer__Room", (inforUser) => {
+        if (user_id === inforUser._id) {
+            window.location.href = `/play/lobby`;
+        } else {
+            var messageElement = `
+                <div class="disconnection">
+                    <p><b>${inforUser.username}</b> đã bị kick</p>
+                </div>
+         `;
+            teamMatchFooterChatbox.innerHTML += messageElement;
+        }
+    })
+
+    socket.on("Server__KickPlayerResult__Room", (message) => {
+        console.log(message);
+    })
+
+    socket.on("Server__UpdateRoom__Room", room => {
+        /*
+            room = {
+                    id: id của room
+                    nameRoom: tên của room
+                    isStart: trạng thái của room // true: đã bắt đầu, false: chưa bắt đầu
+                    password: mật khẩu của room
+                    nameMap://
+                    idMap: //
+                    players: [
+                        {
+                            id: id của player
+                            username: tên của player
+                            role: vai trò của player // Có phải chủ phòng hay không
+                            team: team của player // team Chó hoặc mèo
+                            avatar: avatar của player
+                            isReady: trạng thái sẵn sàng của player // true: đã sẵn sàng, false: chưa sẵn sàng
+                            playing:
+                        }
+                    ]
+                    engineGame: // engine game của room
+            }
+        */
+
+        // reset lại thông tin phòng, mục đích là để cập nhật thông tin mới nhất
+        teamMatchBodySidePlayers.forEach(side => {
+            side.innerHTML = "";
+        });
+        var playerInSideDog = 0;
+        var playerInSideCat = 0;
+        list_players_id = [];
+        teamMatchBodyCenterMap.innerHTML = "";
+
+        // cập nhật lại map
+        teamMatchBodyCenterMap.innerHTML = `
+                <a id="map" style="background-image: url(/img/map.svg);" onclick="changeMap()">
+                    <span id=${room.idMap} >${room.nameMap}</span>
+                </a>
+        `;
+
+        // cập nhật lại danh sách người chơi
+        room.players.forEach(player => {
+
+            // Cập nhật lại role của người chơi
+            if (player.id === user_id) {
+                user_role = player.role;
+            }
+            // thêm thông tin người chơi vào list
+            // sau đó dùng engineGameClient để tạo tank cho người chơi và team của họ
+            list_players_id.push({ id: player.id, team: player.team, username: player.username });
+            if (player.team === "dog") {
+                playerInSideDog++;
+                teamMatchBodySidePlayers[0].innerHTML += `
+                            <div onclick="showUserInfor('${player.id}')" id=${player.id} class="teamMatch__body__side__players__item--active">
+                                <img src="/img/uploads/avatar/${player.avatar}" alt="" class="teamMatch__body__side__players__item--active__img">
+                                <span class="teamMatch__body__side__players__item--active__name">
+                                    ${player.username}
+                                </span>
+                                <span class="teamMatch__body__side__players__item--active__level">
+                                    Level: 1
+                                </span>
+                            </div>
+                        `;
+                if (player.role === "host") {
+                    try {
+                        const namePlayer = teamMatchBodySidePlayers[0].querySelector('.teamMatch__body__side__players__item--active__name');
+                        namePlayer.innerText = player.username + " (Chủ phòng)";
+                        namePlayer.style.color = 'green';
+                        if (player.id === user_id) {
+                            controlGame.classList = "teamMatch__footer__control__button mode__button__control--start";
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                if (player.username === "{{username}}") {
+                    teamMatchBodySidePlayers[0].querySelectorAll('.teamMatch__body__side__players__item--active')[playerInSideDog - 1].style.border = '2px solid red';
+                }
+            }
+            else {
+                playerInSideCat++;
+                teamMatchBodySidePlayers[1].innerHTML += `
+                            <div onclick="showUserInfor('${player.id}')" id=${player.id} class="teamMatch__body__side__players__item--active">
+                                <img src="/img/uploads/avatar/${player.avatar}" alt="" class="teamMatch__body__side__players__item--active__img">
+                                <span class="teamMatch__body__side__players__item--active__name">
+                                    ${player.username}
+                                </span>
+                                <span class="teamMatch__body__side__players__item--active__level">
+                                    Level: 1
+                                </span>
+                            </div>
+                        `;
+                if (player.role === "host") {
+                    try {
+                        const namePlayer = teamMatchBodySidePlayers[1].querySelector('.teamMatch__body__side__players__item--active__name');
+                        namePlayer.innerText = player.username + " (Chủ phòng)";
+                        namePlayer.style.color = 'green';
+                        if (player.id === user_id) {
+                            controlGame.classList = "teamMatch__footer__control__button mode__button__control--start";
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                if (player.username === "{{username}}") {
+                    teamMatchBodySidePlayers[1].querySelectorAll('.teamMatch__body__side__players__item--active')[playerInSideCat - 1].style.border = '2px solid red';
+                }
+            }
+
+            if (player.isReady === true) {
+                const slotPlayer = document.getElementById(player.id);
+                slotPlayer.innerHTML += `
+                    <i class="far fa-check-circle ready__icon"></i>
+                `;
+            }
+        });
+
+        // Tính số người chơi còn thiếu
+        var waittingPlaceHoderInSideDog = 4 - playerInSideDog;
+        var waittingPlaceHoderInSideCat = 4 - playerInSideCat;
+        for (var i = 0; i < waittingPlaceHoderInSideDog; i++) {
+            teamMatchBodySidePlayers[0].innerHTML += `
+                        <div onclick="showBoardInvite()" class="teamMatch__body__side__players__item--waitting">
+                            <div class="players__item__waiting__animation"></div>
+                            <img src="/img/resistanceDog.jpg" alt="" class="teamMatch__body__side__players__item--waitting__img">
+                            <span class="teamMatch__body__side__players__item--waitting__text">
+                                Chờ đợi người chơi...
+                            </span>
+                        </div>
+                    `;
+        }
+
+        for (var i = 0; i < waittingPlaceHoderInSideCat; i++) {
+            teamMatchBodySidePlayers[1].innerHTML += `
+                        <div onclick="showBoardInvite()" class="teamMatch__body__side__players__item--waitting">
+                            <div class="players__item__waiting__animation"></div>
+                            <img src="/img/resistanceDog.jpg" alt="" class="teamMatch__body__side__players__item--waitting__img">
+                            <span class="teamMatch__body__side__players__item--waitting__text">
+                                Chờ đợi người chơi...
+                            </span>
+                        </div>
+                    `;
+        }
+    })
+
+    socket.on("Server__Ready__Room", (id_user) => {
+        const slotPlayer = document.getElementById(id_user);
+        slotPlayer.innerHTML += `
+            <i class="far fa-check-circle ready__icon"></i>
+        `;
+    })
+
+    socket.on("Server__CancelReady__Room", (id_user) => {
+        const slotPlayerCancel = document.getElementById(id_user);
+        slotPlayerCancel.removeChild(slotPlayerCancel.querySelector('.ready__icon'));
+    })
+
+    socket.on("Server__ControlTankTeamMatch__Room", stateGame => {
+        if(stateGame.dogScore) {
+            const dogScore = document.getElementById('score-dog');
+            dogScore.innerText = stateGame.dogScore + "/30";
+
+            const catScore = document.getElementById('score-cat');
+            catScore.innerText = stateGame.catScore + "/30";
+        }
+        else{
+            engineGame.setStateGame(stateGame);
+            engineGame.updateState();
+        }
+
+    })
+
+    socket.on("Server__StartGame__Room", (map) => {
+        closeView();
+        sidebar.style.opacity = '0';
+
+        setTimeout(() => {
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.display = 'block';
+
+        }, 1000);
+
+        let interval = setInterval(() => {
+            const computedStyle = getComputedStyle(progressBar);
+            const width = parseFloat(computedStyle.getPropertyValue('--width')) || 0;
+            progressBar.style.setProperty('--width', width + 1);
+            if (width >= 100) {
+                clearInterval(interval);
+                openView();
+                sidebar.style.display = 'none';
+                gameInfoContainer.style.display = 'block';
+
+                transitionIn.style.zIndex = -100;
+
+                teamMatch.remove();
+
+                mainTag.appendChild(canvas);
+
+                const mapGame = map;
+
+                const keysPressed = {};
+
+                engineGame.setMap(mapGame);
+
+
+                    list_players_id.forEach((player, index) => {
+                        let isExist = false;
+                        if (player.username){
+                            for(let i = 0; i < engineGame.tanks.length; i++){
+                                if(engineGame.tanks[i].idTank === player.id){
+                                    engineGame.tanks[i].nameTank = player.username;
+                                    isExist = true;
+                                }
+                            }
+                            if(!isExist){
+                                engineGame.addTank(player.id, 100 * index, 100 * index, player.team, player.username);
+                            }
+                        }
+                    });
+
+                    setInterval(() => {
+                        var minutesElement = document.getElementById('minutes');
+                        var secondsElement = document.getElementById('seconds');
+                        var minutes = parseInt(minutesElement.innerText);
+                        var seconds = parseInt(secondsElement.innerText);
+
+                        seconds -= 1;
+                        if (seconds < 0) {
+                            minutes -= 1;
+                            seconds = 59;
+                        }
+                        if (minutes < 0) {
+                            clearInterval();
+                        }
+
+                        minutesElement.innerText = minutes;
+                        secondsElement.innerText = seconds;
+                    }, 1000);
+
+
+                    document.addEventListener('keydown', (event) => {
+                        keysPressed[event.key] = true;
+                    });
+
+                    document.addEventListener('keyup', (event) => {
+                        if (keysPressed[' '] && event.key === ' ') {
+                            sendData(user_id, "fire", null);
+                        }
+                        keysPressed[event.key] = false;
+                    });
+
+                    let mouseX = 0;
+                    let mouseY = 0;
+
+                    document.addEventListener('mousemove', (event) => {
+                        const rect = canvas.getBoundingClientRect();
+                        mouseX = event.clientX - rect.left;
+                        mouseY = event.clientY - rect.top;
+
+                        sendData(user_id, "changeRotationTurret", {
+                            x: mouseX,
+                            y: mouseY,
+                        });
+
+                    });
+
+                    function move() {
+                        sendData(user_id, "", null);
+                        if (keysPressed['w']) {
+                            if (movementMode === "rotateMode") {
+                                sendData(user_id, "moveForward", null);
+                            }
+                            if (movementMode === "freeMode") {
+                                sendData(user_id, "moveHead", null);
+                            }
+                        }
+                        if (keysPressed['s']) {
+                            if (movementMode === "rotateMode") {
+                                sendData(user_id, "moveBackward", null);
+                            }
+                            if (movementMode === "freeMode") {
+                                sendData(user_id, "moveBack", null);
+                            }
+                        }
+                        if (keysPressed['a']) {
+                            if (movementMode === "rotateMode") {
+                                sendData(user_id, "rotateLeft", null);
+                            }
+                            if (movementMode === "freeMode") {
+                                sendData(user_id, "moveLeft", null);
+                            }
+                        }
+                        if (keysPressed['d']) {
+                            if (movementMode === "rotateMode") {
+                                sendData(user_id, "rotateRight", null);
+                            }
+                            if (movementMode === "freeMode") {
+                                sendData(user_id, "moveRight", null);
+                            }
+                        }
+
+                        //requestAnimationFrame(move)
+                    }
+
+                    setInterval(() => {
+                        move();
+
+                    }, 1000 / 150);
+                socket.emit("Room__LoadingComplete__Server", user_id);
+            }
+        }, 120);
+    })
+
+    function sendData(user_id, action, data) {
+        //getControl(user_id, action);
+        socket.emit("Room__ControlTankTeamMatch__Server", user_id, action, data, room_id);
+    }
+
+    function getControl(user_id, action) {
+        engineGame.controlTank(user_id, action);
+    }
+
+    async function showUserInfor(id) {
+        // không cho hiển thị thông tin của chính mình
+        if (id === user_id) {
+            return;
+        }
+
+        // lấy thông tin người chơi thông qua api
+        // tại sao không lấy thông tin người chơi thông qua socket?
+        // vì không cần realtime
+        const inforUserResponse = await getFetchApi('/api/user/' + id);
+
+        // nếu có lỗi khi lấy thông tin người chơi thì log ra lỗi và return
+        if (inforUserResponse.err) {
+            console.log(inforUserResponse.err);
+            return;
+        }
+
+        /*
+        <div id="show__infor__user">
+            <div class="infor__user">
+                <img class="infor__user__avatar" src="/img/uploads/avatar/{avatar}" />
+                <div class="infor__user__name__and_level">
+                    <p class="infor__user__name__and_level--name">{username}</p>
+                    <span class="infor__user__name__and_level--level">Level: {level}</span>
+                </div>
+            </div>
+            <div class="show__infor__button">
+                <button class="show__infor__button__kick">Kick</button>
+            </div>
+        </div>
+        
+        */
+
+        // hiển thị thông tin người chơi
+        const showUserInforDiv = document.createElement('div');
+        showUserInforDiv.id = "show__infor__user";
+
+        const inforUser = document.createElement('div')
+        inforUser.classList.add('infor__user');
+        inforUser.addEventListener("click", () => {
+            window.location.href = `/profile/${inforUserResponse.username}`;
+        });
+
+
+        const inforUserAvatar = document.createElement('img')
+        inforUserAvatar.classList.add('infor__user__avatar')
+        inforUserAvatar.src = `/img/uploads/avatar/${inforUserResponse.avatar}`;
+
+
+        const inforUserNameAndLevel = document.createElement('div')
+        inforUserNameAndLevel.classList.add('infor__user__name__and_level')
+
+        const inforUserName = document.createElement('p')
+        inforUserName.classList.add('infor__user__name__and_level--name')
+        inforUserName.innerText = inforUserResponse.username;
+
+        const inforUserLevel = document.createElement('span')
+        inforUserLevel.classList.add('infor__user__name__and_level--level')
+        inforUserLevel.innerText = "Level: " + inforUserResponse.level;
+
+        const showInforButton = document.createElement('div')
+        showInforButton.classList.add('show__infor__button')
+
+        const showInforButtonKick = document.createElement('button')
+        showInforButtonKick.classList.add('show__infor__button__kick')
+        showInforButtonKick.innerText = "Kick"
+        showInforButtonKick.addEventListener('click', () => {
+            socket.emit("Room__KickPlayer__Server", id, room_id);
+            toggle();
+        })
+
+        const showInforButtonAddFriend = document.createElement('button')
+        showInforButtonAddFriend.classList.add('show__infor__button__add__friend')
+        showInforButtonAddFriend.innerText = "Add Friend"
+        showInforButtonAddFriend.addEventListener('click', () => {
+            console.log("sender_id:", user_id);
+            console.log("receiver_id:", id);
+            const sender_id = user_id;
+            const receiver_id = id;
+            socket.emit("Room__AddFriend__Server", sender_id, receiver_id);
+            toggle();
+        })
+
+        // chỉ cho host mới có thể kick
+        if (user_role === "host") {
+            showInforButton.appendChild(showInforButtonKick)
+        }
+        showInforButton.appendChild(showInforButtonAddFriend)
+
+        inforUserNameAndLevel.appendChild(inforUserName)
+        inforUserNameAndLevel.appendChild(inforUserLevel)
+
+        inforUser.appendChild(inforUserAvatar)
+        inforUser.appendChild(inforUserNameAndLevel)
+
+        showUserInforDiv.appendChild(inforUser)
+        showUserInforDiv.appendChild(showInforButton)
+
+        modalBackdrop.classList.add('is-active');
+        mainTag.appendChild(showUserInforDiv);
+    }
+
+    function readyAndStart(event) {
+        const thisButton = event.target;
+        switch (thisButton.classList[1]) {
+            case "mode__button__control--start":
+                if (checkAllReady()) {
+                    socket.emit("Room__StartGame__Server", room_id, list_players_id);
+                }
+                else {
+                    alert("Not all ready");
+                }
+                break;
+            case "mode__button__control--ready":
+                thisButton.classList.remove("mode__button__control--ready");
+                thisButton.classList.add("mode__button__control--cancel");
+                const slotPlayer = document.getElementById(user_id);
+                slotPlayer.innerHTML += `
+                    <i class="far fa-check-circle ready__icon"></i>
+                `;
+
+                socket.emit("Room__Ready__Server", user_id, room_id);
+                break;
+            case "mode__button__control--cancel":
+                thisButton.classList.remove("mode__button__control--cancel");
+                thisButton.classList.add("mode__button__control--ready");
+                const slotPlayerCancel = document.getElementById(user_id);
+                slotPlayerCancel.removeChild(slotPlayerCancel.querySelector('.ready__icon'));
+                socket.emit("Room__CancelReady__Server", user_id, room_id);
+                break;
+        }
+    }
+
+    function checkAllReady() {
+        const players = teamMatchBody.querySelectorAll('.teamMatch__body__side__players__item--active');
+        let isAllReady = true;
+        players.forEach(player => {
+            if (!player.querySelector('.ready__icon') && player.id !== user_id) {
+                isAllReady = false;
+            }
+        });
+        return isAllReady;
+    }
+
+    window.onload = () => {
+        openView();
+    }
+
+   
+</script>
+
+<link rel="stylesheet" href="/js/transition.js">

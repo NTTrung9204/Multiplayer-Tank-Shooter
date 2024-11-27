@@ -1,0 +1,100 @@
+.game-mode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-mode {
+    z-index: 1;
+    position: relative;
+    display: inline-block;
+    margin: 20px;
+    width: 294px;
+}
+
+.btn-mode img {
+    height: 32px;
+}
+
+.btn-mode a {
+    color: #000;
+    font-family: Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 22px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    background-color: #fc6c6c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    padding: 6px 40px;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    text-shadow: 0px 1px 0px #000;
+    filter: dropshadow(color=#000, offx=0px, offy=1px);
+
+    -webkit-box-shadow: inset 0 1px 0 #f8cbcb, 0 10px 0 #7d0101;
+    -moz-box-shadow: inset 0 1px 0 #f8cbcb, 0 10px 0 #7d0101;
+    box-shadow: inset 0 1px 0 #f8cbcb, 0 10px 0 #7d0101;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    transition: all 0.1s ease-in-out;
+}
+
+.btn-mode a:active {
+    top: 10px;
+    background-color: #CD5C5C;
+    -webkit-box-shadow: inset 0 1px 0 #f8cbcb, inset 0 -3px 0 #7d0101;
+    -moz-box-shadow: inset 0 1px 0 #f8cbcb, inset 0 -3pxpx 0 #7d0101;
+    box-shadow: inset 0 1px 0 #f8cbcb, inset 0 -3px 0 #7d0101;
+}
+
+.btn-mode::after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    padding: 4px;
+    position: absolute;
+    bottom: -15px;
+    left: -4px;
+    z-index: -1;
+    background-color: #2B1800;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-8px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(8px);
+    }
+}
+
+.btn-mode a:hover {
+    animation-name: shake;
+    animation-duration: 0.2s;
+    animation-delay: 0.05s;
+    animation-timing-function: linear;
+}

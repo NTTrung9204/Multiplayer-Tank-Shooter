@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  node:
+    container_name: node_server
+    build: .
+    ports:
+      - 80:80
+    volumes:
+      - /app/node_modules
+      - server_img:/app/public/img
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 80
+      MONGO_URL: 'mongodb+srv://PASSWORD:PASSWORD@pbl4.s2c4d.mongodb.net/?retryWrites=true&w=majority'
+      NODE_ENV: 'development'
+  mongodb:
+    container_name: mongo
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME= PASSWORD
+      - MONGO_INITDB_ROOT_PASSWORD= PASSWORD
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+volumes:
+  mongodata: {}
+  server_img: {}

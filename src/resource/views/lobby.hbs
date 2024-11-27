@@ -1,0 +1,351 @@
+{{!-- <div class="transition ">
+    <div class="transition__left "></div>
+    <div class="transition__right "></div>
+</div> --}}
+
+<div class="main__title">
+    <h2>Đại sảnh,hãy chọn phòng</h2>
+    <div id="button__option--lobby">
+        <i onclick="refreshLobby()" id="refresh__button" class="fas fa-sync-alt"></i>
+        <button id="main__title__button--createRoom" onclick="createRoom()">Tạo phòng</button>
+    </div>
+</div>
+<div class="main__content">
+    <div id="messages"></div>
+    <div class="listroom">
+
+    </div>
+</div>
+{{!--LỚP MỜ --}}
+<div id="modal-backdrop"></div>
+{{!--POPUP CHỌN MAP --}}
+<div id="map-selection">
+    <div class="row-1">
+        <a onclick="toggle()">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="row-2">
+        <div id="chooseMap" class="slideshow-container">
+            {{!-- {{#each listmap}}
+            <div class="slide">
+                <div class="name">{{this.mapName}}</div>
+                <img src="/img/slide/{{this.chart}}" alt="">
+            </div>
+
+            {{/each}} --}}
+            {{!-- <p class="slide">
+                <span id="nameMap" class="name"></span>
+            </p>
+            <canvas id="canvas"></canvas> --}}
+            <a class="prev" onclick="plusSlides(-1)"><i class="fa-solid fa-angle-left"></i></a>
+            <a class="next" onclick="plusSlides(1)"><i class="fa-solid fa-angle-right"></i></a>
+        </div>
+        <div class="input-container">
+            <div class="input-password">
+                <i class="fa-solid fa-lock"></i>
+                <input type="text" placeholder="password">
+            </div>
+            <button id="selection-btn" onclick="selectMap()"><span class="fa-regular fa-map"></span>Chọn</button>
+        </div>
+    </div>
+</div>
+{{!--POPUP NHẬP MẬT KHẨU ROOM--}}
+<div id="alert-confirm-password">
+    <div class="row-1">
+        <a onclick="toggle()">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="row-2">
+        <h2>NHẬP MẬT KHẨU</h2>
+        <div class="inputtext">
+            <input type="text">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <section class="error-notification">
+            <p></p>
+        </section>
+        <button onclick="confirmPassword()">XÁC NHẬN</button>
+    </div>
+</div>
+{{!-- POPUP PHÒNG ĐẦY --}}
+<div id="alert-error">
+    <div class="row-1">
+        <a onclick="toggle()">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="row-2">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p id="error-message">PHÒNG ĐÃ ĐẦY</p>
+    </div>
+</div>
+
+<script src="/js/engineGameClient.js"></script>
+
+<script>
+    const listMap = {{{ json listmap }}};
+    const chooseMap = document.getElementById('chooseMap');
+    const errorMessage = document.getElementById('error-message');
+
+    const user_id = "{{user_id}}";
+
+    listMap.forEach((map, index) => {
+        console.log(map);
+        const slide = document.createElement('div');
+        slide.classList.add('slide');
+        const name = document.createElement('div');
+        name.classList.add('name');
+        name.textContent = map.mapName;
+        slide.appendChild(name);
+
+        const canvas = createMapCanvas(map.dogPosition, map.catPosition, map.obstacles);
+        slide.appendChild(canvas);
+
+        slide.id = map._id;
+
+        chooseMap.appendChild(slide);
+    });
+
+
+    // document.getElementById('nameMap').textContent = listMap[0].mapName;
+
+    socket.emit("Lobby__ConnectToLobby__Server", user_id);
+
+    socket.on("Server__UpdateLobby__Lobby", (rooms) => {
+        console.log(rooms[0])
+        const listroom = document.querySelector('.listroom');
+        listroom.innerHTML = "";
+        var check = true;
+        rooms.forEach(room => {
+            if (room.players.length > 0) {
+                check = false;
+                const lock = room.password === "" ? false : true;
+                const numbers = room.players.length;
+                let hostName = "";
+                let avatar = "";
+                console.log(room.players)
+                room.players.forEach(player => {
+                    if (player.role === "host") {
+                        hostName = player.username;
+                        avatar = player.avatar;
+                    }
+                    console.log("hostName:", hostName);
+                    console.log("avatar:", avatar);
+                });
+                //(nameRoom, numbers, lock, hostName, idRoom, avatar, nameMap)
+                insertRoom(room.nameRoom, numbers, lock, hostName, room.id, avatar, room.nameMap);
+            }
+        });
+        if (check) {
+            document.querySelector('.main__content #messages').innerHTML = "<p>Chưa có phòng nào</p>";
+        }
+    })
+
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    // Hàm tạo map canvas với kích thước mới
+    function createMapCanvas(dogPos, catPos, obstacles) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; // Thay đổi kích thước
+        canvas.height = 300; // Thay đổi kích thước
+        const scale = 1000 / canvas.width; // Tính tỉ lệ
+        const originalWidthObstacle = 25;
+        const originalWidthHome = 100;
+        const ctx = canvas.getContext('2d');
+
+        // Vẽ chướng ngại vật
+        obstacles.forEach(obstacle => {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(obstacle.x / scale, obstacle.y / scale, originalWidthObstacle / scale, originalWidthObstacle / scale); // Tăng kích thước
+        });
+
+        // Vẽ team Dog
+        ctx.fillStyle = '#5678F0';
+        ctx.fillRect(dogPos.x / scale, dogPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        // Vẽ team Cat
+        ctx.fillStyle = '#EB5757';
+        ctx.fillRect(catPos.x / scale, catPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        // Đặt màu đường viền
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5;
+
+        // Vẽ đường viền cho canvas
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        return canvas;
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("slide");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            slides[i].setAttribute("display", "none");
+        }
+        slides[slideIndex - 1].setAttribute("display", "block");
+        slides[slideIndex - 1].style.display = "block";
+    }
+
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const mapSelection = document.getElementById('map-selection');
+    const alertConfirmPassword = document.getElementById('alert-confirm-password');
+    const passwordInput = document.querySelector('#alert-confirm-password input');
+    const messages = alertConfirmPassword.querySelector('.error-notification p');
+    const iconWarning = alertConfirmPassword.querySelector('.inputtext i');
+    const alertError = document.querySelector('#alert-error');
+
+    function toggle() {
+
+
+        modalBackdrop.classList.remove('is-active');
+        mapSelection.classList.remove('is-active');
+        alertConfirmPassword.classList.remove('is-active');
+        alertError.classList.remove('is-active');
+    }
+
+    function refreshLobby() {
+        socket.emit("Lobby__ConnectToLobby__Server", user_id);
+    }
+
+    function createRoom() {
+        modalBackdrop.classList.add('is-active');
+        mapSelection.classList.add('is-active');
+    }
+
+    function selectMap() {
+        const map = document.querySelector(".slide[display=block]");
+        const passwordRoom = mapSelection.querySelector('input').value;
+        console.log(passwordRoom);
+        const idMap = map.id;
+        socket.emit("Lobby__CreateRoomTeamMatch__Server", user_id, idMap, passwordRoom);
+        toggle();
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modalBackdrop) {
+            toggle();
+        }
+    }
+
+    function joinRoom(button) {
+        socket.emit("Lobby__JoinRoomTeamMatch__Server", user_id, (response) => {
+            console.log(response.inGame)
+            if (!response.inGame) {//false
+                const room = button.closest('.room');
+                const idRoom = room.getAttribute('id');
+                const quantity = room.querySelector('.quantity').textContent;
+                if (quantity === "8") {
+                    modalBackdrop.classList.add('is-active');
+                    alertError.classList.add('is-active');
+
+                } else {
+                    if (room.getAttribute('lock') === "false") {
+                        window.location.href = `/play/lobby/${idRoom}`;
+                    } else {
+                        passwordInput.value = "";
+                        messages.textContent = "";
+                        passwordInput.style.border = "none";
+                        iconWarning.style.display = "none";
+                        modalBackdrop.classList.add('is-active');
+                        alertConfirmPassword.classList.add('is-active');
+                        alertConfirmPassword.setAttribute('idroom', idRoom);
+                    }
+                }
+            } else {
+                modalBackdrop.classList.add('is-active');
+                alertError.classList.add('is-active');
+                errorMessage.textContent = "Bạn đã tham gia vào một trận đang diễn ra";
+            }
+        });
+
+    }
+
+    function confirmPassword() {
+        const idRoom = alertConfirmPassword.getAttribute('idroom');
+        const password = passwordInput.value;
+        if (password !== "") {
+            socket.emit("Lobby__ConfirmPassword__Server", idRoom, password, (response) => {
+                if (response.success) {
+                    toggle();
+                    window.location.href = `/play/lobby/${idRoom}`;
+                } else {
+                    passwordInput.value = "";
+                    iconWarning.style.display = "block";
+                    passwordInput.style.border = "2px solid #951212";
+                    messages.textContent = "Mật khẩu không đúng";
+                }
+            });
+        }
+    }
+
+    function insertRoom(nameRoom, numbers, lock, hostName, idRoom, avatar, nameMap) {
+        console.log("insertRoom: ", hostName, avatar)
+        const listroom = document.querySelector('.listroom');
+        const room = document.createElement('div');
+        room.classList.add('room');
+        room.setAttribute('lock', lock);
+        room.setAttribute('id', idRoom);
+
+        if (lock) {
+            room.innerHTML = `
+            <div class="row-1">
+                <div class="col-left">
+                    <img src="/img/uploads/avatar/${avatar}" alt="Avatar">
+                </div>
+                <div class="col-right">
+                    <h2>${nameRoom}</h2>
+                    <span class="fa-solid fa-lock"></span>
+                    <p id="username">${hostName}</p>
+                </div>
+            </div>
+            <div class="row-2">
+                <p class="namemap">${nameMap}</p>
+                <p class="numberplayer">Số người chơi:<span class="quantity">${numbers}</span>/8</p>
+                <a style="background-image: linear-gradient(to bottom, #B7B7B7, #0A3620, #0B401D,#649B71);" onclick="joinRoom(this)">THAM GIA</a>
+            </div>
+        `;
+        } else {
+            room.innerHTML = `
+            <div class="row-1">
+                <div class="col-left">
+                    <img src="/img/uploads/avatar/${avatar}" alt="Avatar">
+                </div>
+                <div class="col-right">
+                    <h2>${nameRoom}</h2>
+                    <p id="username">${hostName}</p>
+                </div>
+            </div>
+            <div class="row-2">
+                <p class="namemap">${nameMap}</p>
+                <p class="numberplayer">Số người chơi:<span class="quantity">${numbers}</span>/8</p>
+                <a onclick="joinRoom(this)" >THAM GIA</a>
+            </div>
+        `;
+        }
+        if (numbers === 8) {
+            room.setAttribute('style', 'background - image: linear - gradient(to bottom, #50FEFB, #193B69);');
+        }
+        listroom.appendChild(room);
+
+    }
+    window.onload = () => {
+        //    if (roomLobby.length === 0) {
+        //          document.querySelector('.main__content #messages').innerHTML = "<p>Chưa có phòng nào</p>";
+        //        }
+    }
+    socket.on("Server__CreateRoomSuccess__Lobby", (idRoom) => {
+        window.location.href = `/play/lobby/${idRoom}`;
+    })
+
+</script>

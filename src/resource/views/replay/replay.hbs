@@ -1,0 +1,31 @@
+<script src="/js/engineGameClient.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
+    integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div>
+    <canvas id="replay"></canvas>
+</div>
+
+<script>
+    const canvas = document.getElementById('replay');
+    const matches = {{{json matches}}};
+    console.log(matches);
+    const replay = matches.history;
+    const engineGame = new Game(canvas);
+    canvas.width = 1000;
+    canvas.height = 500;
+
+    engineGame.setMap(matches.map_infor[0]);
+
+    //console.log(replay[Math.floor(Math.random() * replay.length)]);
+    const allStateGame = engineGame.utilities.decodedData(replay);
+    console.log(allStateGame);
+    const encodeState = allStateGame[Math.floor(Math.random() * allStateGame.length)];
+    console.log(encodeState);
+    const decodeState = engineGame.utilities.decodedData(encodeState);
+    console.log(decodeState);
+
+
+    engineGame.replayGame(replay, fps = 60);
+</script>

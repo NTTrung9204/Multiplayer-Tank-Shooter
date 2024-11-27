@@ -1,0 +1,49 @@
+ <link rel="stylesheet" href="/css/rank.css">
+<div class="result">
+
+    <table>
+        <thead>
+
+            <tr>
+                <th>Rank</th>
+                <th>Tên người dùng</th>
+                <th>Cấp độ</th>
+                <th>Số trận đã chơi</th>
+                <th>Tỉ lệ thắng</th>
+                <th>Kinh Nghiệm</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each sortedUsers}}
+            <tr class="user__list">
+                <td>
+                    {{this.rank}}
+                    <span class="round">
+                        <img src="/img/{{this.avatar}}" alt="user" width="50">
+                    </span>
+                </td>
+                <td class="username__list">
+                    <h5>
+                        <a href="/profile/{{this._id}}">
+                            <span>{{this.username}}</span>
+                        </a>
+                    </h5>
+                </td>
+                <td>{{this.level}}</td>
+                <td>{{this.quantityMatch}}</td>
+                <td>60%</td>
+                <td>{{this.exp}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+
+    </table>
+</div>
+
+<div style="display:flex">
+    <div class="pagination pagination-style-three m-t-20 m-b-40">
+        {{#each paginationLoop}}
+        <a href="/rank/{{this}}" class="{{#condition this ../currentPage}}selected{{/condition}}">{{this}}</a>
+        {{/each}}
+    </div>
+</div>

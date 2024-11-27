@@ -1,0 +1,39 @@
+<header>
+    <div class="header__side">
+        <img src="/img/logo.png" alt="">
+        <a class="header__side__title" href="">
+            <span>Game</span>
+            <span style="color: #BC40DF;">- Tank</span>
+        </a>
+    </div>
+    <div class="header__side">
+        <a class="header__side__item" href="">
+            {{#if username}}
+            <i class="far fa-user"></i>
+            <span>{{username}}</span>
+            {{else}}
+            <span>No login</span>
+            {{/if}}
+        </a>
+        <a class="header__side__item logout-btn" >
+            <i class="fas fa-sign-out-alt"></i>
+            {{#if username}}
+            <span>Đăng xuất</span>
+            {{else}}
+            <span>Đăng nhập</span>
+            {{/if}}
+        </a>
+    </div>
+</header>
+<script>
+    const btn = document.querySelector('.logout-btn');
+    const status = document.querySelector('.logout-btn span').textContent;
+    btn.addEventListener('click', (event) => {
+       event.preventDefault();
+        if (status === "Đăng xuất") {
+            window.location.href='/logout';
+        } else {
+            window.location.href = '/login'
+        }
+    });
+</script>

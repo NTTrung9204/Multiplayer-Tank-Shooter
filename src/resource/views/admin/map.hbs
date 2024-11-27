@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="/css/map.css">
+
+<div class="main">
+    <div class="table-section">
+        <table id="mapTable">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Map</th>
+                    <th>Tên Map</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // Hàm tạo map canvas với kích thước mới
+    function createMapCanvas(dogPos, catPos, obstacles) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 200; // Thay đổi kích thước
+        canvas.height = 100; // Thay đổi kích thước
+        const scale = 1000 / canvas.width; // Tính tỉ lệ
+        const originalWidthObstacle = 25;
+        const originalWidthHome = 100;
+        const ctx = canvas.getContext('2d');
+    
+        // Vẽ chướng ngại vật
+        obstacles.forEach(obstacle => {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(obstacle.x / scale, obstacle.y / scale, originalWidthObstacle / scale, originalWidthObstacle / scale); // Tăng kích thước
+        });
+
+        // Vẽ team Dog
+        ctx.fillStyle = '#5678F0';
+        ctx.fillRect(dogPos.x / scale, dogPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        // Vẽ team Cat
+        ctx.fillStyle = '#EB5757';
+        ctx.fillRect(catPos.x / scale, catPos.y / scale, originalWidthHome / scale, originalWidthHome / scale); // Tăng kích thước
+
+        return canvas;
+    }
+
+    // Hàm hiển thị bản đồ vào bảng
+    function addMapToTable(mapData, index) {
+        const tbody = document.getElementById('mapTable').querySelector('tbody');
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${index + 1}</td>
+        <td></td>
+        <td>${mapData.mapName}</td>
+        <td>
+            <button class="mapButtonRemove" onclick="removeMap('${mapData._id}')">Xóa</button>
+            <button class="mapButtonEdit" onclick="editMap('${mapData._id}')">Chỉnh sửa</button>
+        </td>
+    `;
+
+        const canvas = createMapCanvas(mapData.dogPosition, mapData.catPosition, mapData.obstacles);
+        row.cells[1].appendChild(canvas); // Thêm canvas vào cột Map
+
+        tbody.appendChild(row);
+    }
+
+    // Xóa bản đồ
+    function removeMap(idMap) {
+        console.log('Xóa bản đồ có id:', idMap);
+    }
+
+    // Chỉnh sửa bản đồ
+    function editMap(idMap) {
+        window.location.href = `/admin/map/edit/${idMap}`;
+    }
+
+    const listMaps = {{{json myMaps}}};
+
+    // Thêm các bản đồ mẫu vào bảng khi tải trang
+    window.onload = () => {
+        listMaps.forEach((mapData, index) => addMapToTable(mapData, index));
+    };
+
+</script>

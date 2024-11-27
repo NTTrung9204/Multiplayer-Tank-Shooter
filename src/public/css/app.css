@@ -1,0 +1,372 @@
+@charset "UTF-8";
+* {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #EAF0F2;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+header {
+  background-color: #292C2F;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__side {
+  display: flex;
+  align-items: center;
+  margin: 0 50px;
+}
+
+.header__side__title {
+  color: white;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.header__side img {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+}
+
+.header__side__item {
+  padding: 10px 15px;
+  border: 1px solid #5E6367;
+  color: white;
+  text-decoration: unset;
+  border-radius: 3px;
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+.header__side__item i {
+  margin: 0px 5px;
+}
+
+.header__side__item span {
+  color: white;
+  font-weight: bold;
+}
+
+section {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+#sidebar {
+  background-color: #fff;
+  width: 225px;
+  padding: 15px 10px;
+  border-radius: 10px;
+  position: relative;
+}
+
+#game-info-container {
+  display: none;
+  background-color: #000;
+  width: 225px;
+  padding: 15px 10px;
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+  align-items: center;
+}
+
+.timer {
+  background-color: #b04a48;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.scoreboard {
+  background-color: #fff;
+  width: 100%;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.team-logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.score {
+  text-align: left;
+}
+
+.kills {
+  display: flex;
+  align-items: center;
+}
+
+.skull-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+hr {
+  border: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.exit-btn {
+  background-color: #3b53e1;
+  color: white;
+  padding: 10px 0;
+  border: none;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.exit-btn:hover {
+  background-color: #2b3cb7;
+}
+
+#sidebar .sidebar__item {
+  border-top: 1px dashed #eee;
+  padding: 15px 15px;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar__item i {
+  margin-right: 10px;
+}
+
+.sidebar__item .notice {
+  color: #2196f3;
+}
+
+.sidebar__item {
+  color: #999;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sidebar__item__hover {
+  color: #fff !important;
+}
+
+#sidebar__item--active {
+  color: #555;
+}
+
+#sidebar__slice {
+  background-color: #CD5C5C;
+  position: absolute;
+  padding: 14.5px 0;
+  transform: translateY(1px);
+  width: calc(100% - 20px);
+  border-radius: 10px;
+  color: #CD5C5C;
+  z-index: 0;
+  transition: all 0.15s;
+}
+
+main {
+  position: relative;
+  flex: 1;
+  background-color: #fff;
+  width: 80%;
+  padding: 25px;
+  border-radius: 15px;
+  min-height: 580px;
+}
+
+.main__title {
+  position: relative;
+  width: 100%;
+}
+
+.main__title::after {
+  content: "";
+  display: block;
+  width: 100%;
+  position: absolute;
+  background-color: rgba(204, 204, 204, 0.4);
+  height: 1px;
+  bottom: -10px;
+}
+
+.main__content {
+  width: 100%;
+  height: 480px;
+  margin-top: 20px;
+  overflow-y: auto;
+}
+
+.toast-container {
+  position: absolute;
+  bottom: 25px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Khoảng cách giữa các thông báo */
+  z-index: 999;
+}
+
+.toast {
+  border-radius: 12px;
+  background: #fff;
+  padding: 20px 35px 20px 25px;
+  box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transform: translateX(calc(100% + 30px));
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+  min-width: 400px;
+  /* Để thông báo không bị co lại */
+}
+
+.toast.active {
+  transform: translateX(0%);
+}
+
+.toast .toast-content {
+  display: flex;
+  align-items: center;
+}
+
+.toast-content i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px;
+  min-width: 35px;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 50%;
+}
+
+.toast-content i.success {
+  background-color: #4caf50;
+}
+
+.toast-content i.failed {
+  background-color: #f44336;
+}
+
+.toast-content i.warning {
+  background-color: #ff9800;
+}
+
+.toast-content i.infor {
+  background-color: #2196f3;
+}
+
+.toast-content .toast-message {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  align-items: flex-start;
+}
+
+.toast-message .text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #666666;
+}
+
+.toast-message .text.text-1 {
+  font-weight: 600;
+  color: #333;
+}
+
+.toast .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 5px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.toast .close:hover {
+  opacity: 1;
+}
+
+.toast .progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+}
+
+.toast .progress:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.progress--success:before {
+  background-color: #4caf50;
+}
+
+.progress--failed:before {
+  background-color: #f44336;
+}
+
+.progress--warning:before {
+  background-color: #ff9800;
+}
+
+.progress--infor:before {
+  background-color: #2196f3;
+}
+
+.toast .btn--accept {
+  all: unset;
+  color: #fff;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background-color: #2196f3;
+  transition: all 0.3s;
+}
+
+.toast .btn--accept:hover {
+  background-color: #0c7cd5;
+}
+
+.progress.active:before {
+  animation: progress 5s linear forwards;
+}
+
+@keyframes progress {
+  100% {
+    right: 100%;
+  }
+}
+
+/*# sourceMappingURL=app.css.map */

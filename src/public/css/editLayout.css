@@ -1,0 +1,119 @@
+@charset "UTF-8";
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top-section {
+  margin-bottom: 10px;
+}
+
+#mapName {
+  padding: 10px;
+  width: 500px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#container {
+  width: 1000px;
+  height: 500px;
+  display: grid;
+  grid-template-columns: repeat(40, 25px);
+  grid-template-rows: repeat(20, 25px);
+  border: 1px solid black;
+  position: relative;
+  margin-right: 20px;
+  /* Tạo khoảng cách với phần controls */
+}
+
+.square {
+  width: 25px;
+  height: 25px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Đặt các điều khiển canh trái */
+  margin-left: 20px;
+}
+
+.controls {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.controls li {
+  margin: 0;
+}
+
+.controls button {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  /* Để nút chiếm toàn bộ chiều rộng */
+}
+
+.controls button:hover {
+  background-color: #ddd;
+}
+
+.controls button.active {
+  background-color: #6CD928;
+  color: white;
+  border-color: #6CD928;
+}
+
+#editMapBtn {
+  background-color: #FF5733;
+  color: white;
+  border-color: #FF5733;
+}
+
+#editMapBtn:hover {
+  background-color: #FF3300;
+  border-color: #FF3300;
+}
+
+#dog,
+#cat {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+#dog {
+  background-color: #5678F0;
+  top: 0;
+  left: 0;
+}
+
+#cat {
+  background-color: #EB5757;
+  bottom: 0;
+  right: 0;
+}
+
+#containerMap {
+  display: flex;
+  justify-content: space-around;
+}
+
+/*# sourceMappingURL=editLayout.css.map */

@@ -1,0 +1,175 @@
+<div id="sidebar">
+    {{!-- Sử dụng "Trung" trong sidebar__slice mục đích để giữ chỗ và làm cho element đúng kích thước với item--}}
+    <div id="sidebar__slice"> Trung</div>
+    <div id="sidebar__item--active" class="sidebar__item">
+        <i class="fas fa-home"></i>
+        <span>Trang chủ</span>
+    </div>
+    <div class="sidebar__item" onclick="playgame()">
+        <i class="fas fa-gamepad"></i>
+        <span>Trò chơi</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="fab fa-hackerrank"></i>
+        <span>Xếp hạng</span>
+    </div>
+    <div class="sidebar__item" onclick="viewHistory()">
+        <i class="fas fa-history"></i>
+        <span>Lịch sử</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="fas fa-cogs"></i>
+        <span>Cài đặt</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="fas fa-question-circle"></i>
+        <span>Hướng dẫn</span>
+    </div>
+    <div class="sidebar__item" onclick="viewProfile()">
+        <i class="far fa-user"></i>
+        <span>Cá nhân</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="far fa-envelope"></i>
+        <span>Feedback</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="far fa-comments"></i>
+        <span>Cộng đồng</span>
+    </div>
+    <div class="sidebar__item">
+        <i class="fa-regular fa-bell"></i>
+        <span>Thông báo</span>
+        <span class="notice">New</span>
+    </div>
+</div>
+
+<div id="game-info-container">
+    <div class="timer">
+        <span id="minutes">5</span>:<span id="seconds">00</span>
+    </div>
+    <div class="scoreboard">
+        <div class="team cat-team">
+            <img src="/img/cat.png" alt="Team cat Logo" class="team-logo">
+            <div class="score ">
+                <p>Score: <span id="score-cat">0/30</span></p>
+                {{!-- <div class="kills">
+                    <img src="/img/svg/skull.svg" alt="Skull Icon" class="skull-icon">
+                    <span id="kills-cat">3</span>
+                </div> --}}
+            </div>
+        </div>
+        <hr>
+        <div class="team dog-team">
+            <img src="/img/dog.png" alt="Team dog Logo" class="team-logo">
+            <div class="score">
+                <p>Score: <span id="score-dog">0/30</span></p>
+                {{!-- <div class="deaths">
+                    <img src="/img/svg/skull.svg" alt="Skull Icon" class="skull-icon">
+                    <span id="kills-dog">3</span>
+                </div> --}}
+            </div>
+        </div>
+    </div>
+    <button class="exit-btn">Thoát</button>
+</div>
+<script>
+
+    function playgame() {
+        const username = '{{username}}';
+        if (username) {
+            window.location.href = `/play`;
+        }
+    }
+
+    function viewProfile() {
+        const username = '{{username}}';
+        if (username) {
+            window.location.href = `/profile/{{username}}`;
+        }
+    }
+
+    function viewHistory() {
+        const username = '{{username}}';
+        if (username) {
+            window.location.href = `/history`;
+        }
+    }
+</script>
+<script>
+    /*
+        * Sử dụng DOMContentLoaded để đảm bảo rằng tất cả các phần tử đã được load xong, nếu để thẳng ở main.hbs thì không cần
+        * Tuy nhiên cần để script ở đây sẽ phù hợp hơn vì nó là thành phần của sidebar
+        * Các mã màu sắc được sử dụng:
+        * - Màu của mục đang active: #555 (màu xám)
+        * - Màu của mục đang hover: #999 (màu xám nhạt)
+        * - Màu của mục được hover: #fff (màu trắng)
+        * Tóm tắt cách hoạt động:
+        * - Khi di chuyển chuột vào một mục sidebar, slice sẽ di chuyển đến mục đó bằng cách tính toán vị trí và set top cho nó
+        * - Màu của mục đang hover sẽ thay đổi thành màu trắng, màu của mục hover trước đó sẽ trở về màu xám nhạt
+        * - Khi di chuyển chuột ra khỏi vùng sidebar, sẽ reset lại màu của các mục về trạng thái ban đầu và đặt slice về mục active
+    */
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy phần tử "slice" trong sidebar
+        const sidebarSlice = document.getElementById('sidebar__slice');
+
+        // Lấy tất cả các phần tử có class "sidebar__item"
+        const sidebarItems = document.querySelectorAll('.sidebar__item');
+
+        // Lấy phần tử sidebar và xác định kích thước, vị trí của nó
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBounds = sidebar.getBoundingClientRect();
+
+        // Biến lưu trữ chỉ số của mục đang được kích hoạt và mục đang được hover
+        let activeIndex = 0;
+        let hoverIndex = activeIndex;
+
+        // Hàm reset lại màu sắc các mục sidebar về trạng thái ban đầu
+        function resetStyles() {
+            sidebarItems[hoverIndex].style.color = '#999'; // Màu của mục hover trước đó
+            sidebarItems[activeIndex].style.color = '#555'; // Màu của mục đang active
+            sidebarSlice.style.top = `${sidebarItems[activeIndex].offsetTop}px`; // Di chuyển slice về vị trí của mục active
+        }
+
+        // Xử lý sự kiện hover (mouseover) trên các mục sidebar
+        sidebar.addEventListener('mouseover', function (e) {
+            // Kiểm tra nếu phần tử đang hover là một trong các mục sidebar
+            if (e.target.classList.contains('sidebar__item')) {
+                // Đặt lại màu cho mục active
+                sidebarItems[activeIndex].style.color = '#555';
+
+                // Kiểm tra nếu mục đang hover không phải là mục hover trước đó
+                if (e.target !== sidebarItems[hoverIndex]) {
+                    // Đặt lại màu cho mục hover trước đó
+                    sidebarItems[hoverIndex].style.color = '#999';
+
+                    // Cập nhật chỉ số mục hover hiện tại
+                    hoverIndex = Array.from(sidebarItems).indexOf(e.target);
+                }
+
+                // Di chuyển slice đến mục đang hover và đổi màu
+                sidebarSlice.style.top = `${e.target.offsetTop}px`;
+                e.target.style.color = '#fff';
+            }
+        });
+
+        // Xử lý sự kiện di chuyển chuột ra khỏi vùng sidebar
+        document.addEventListener('mousemove', function (e) {
+            // Kiểm tra nếu con trỏ chuột ra khỏi vùng sidebar
+            if (
+                e.clientX < sidebarBounds.left ||
+                e.clientX > sidebarBounds.right ||
+                e.clientY < sidebarBounds.top ||
+                e.clientY > sidebarBounds.bottom
+            ) {
+                // Reset lại các kiểu cho mục sidebar
+                resetStyles();
+
+                // Đặt lại chỉ số hover về mục active và đổi màu cho nó
+                hoverIndex = activeIndex;
+                sidebarItems[hoverIndex].style.color = '#fff';
+            }
+        });
+    });
+
+</script>

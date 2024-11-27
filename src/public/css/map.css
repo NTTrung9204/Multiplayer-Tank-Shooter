@@ -1,0 +1,86 @@
+@charset "UTF-8";
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-section {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#mapTable {
+  border-collapse: collapse;
+  width: 80%;
+  /* Chiều rộng của bảng */
+  transition: all 0.3s ease;
+  /* Hiệu ứng chuyển tiếp */
+}
+
+#mapTable th,
+#mapTable td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  /* Hiệu ứng chuyển màu */
+}
+
+#mapTable th {
+  background-color: #6CD928;
+}
+
+/* Đường viền cho canvas */
+#mapTable td canvas {
+  border: 2px solid #333;
+  /* Thay đổi màu và độ dày của đường viền nếu cần */
+  border-radius: 5px;
+  /* Tạo đường viền tròn nếu muốn */
+}
+
+/* Hiệu ứng hover cho hàng */
+#mapTable tr:hover {
+  background-color: #f9f9f9;
+  /* Màu nền khi hover */
+}
+
+/* Hiệu ứng cho nút hành động */
+.mapButtonRemove {
+  background-color: #EB5757;
+  /* Màu nền mặc định */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Hiệu ứng chuyển màu */
+}
+
+.mapButtonRemove:hover {
+  background-color: #ef4141;
+  /* Màu nền khi hover */
+}
+
+/* Hiệu ứng cho nút hành động */
+.mapButtonEdit {
+  background-color: #5678F0;
+  /* Màu nền mặc định */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Hiệu ứng chuyển màu */
+}
+
+.mapButtonEdit:hover {
+  background-color: #345ef8;
+  /* Màu nền khi hover */
+}
+
+/*# sourceMappingURL=map.css.map */

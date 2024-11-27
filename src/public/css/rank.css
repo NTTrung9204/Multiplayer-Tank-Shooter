@@ -1,0 +1,109 @@
+@charset "UTF-8";
+table {
+  border-collapse: collapse;
+  min-width: 80%;
+  margin: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+th,
+td {
+  position: relative;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th:first-child,
+td:first-child,
+th:nth-child(2),
+td:nth-child(2) {
+  text-align: left;
+  /* Căn lề trái cho STT và Họ tên */
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  text-align: left;
+  /* Căn lề trái cho STT và Họ tên */
+}
+
+th,
+td {
+  text-align: center;
+  /* Căn giữa cho các cột khác */
+}
+
+th {
+  background-color: #76EE76;
+  color: rgb(0, 0, 0);
+  border: 1px solid #ddd;
+}
+
+td {
+  border: 1px solid #000;
+}
+
+td a {
+  color: #646464;
+  transition: all 0.3s linear;
+}
+
+.header__nav-click::after {
+  transform: scale(1) !important;
+}
+
+td a:hover {
+  color: #000;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+.result {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+}
+span img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  right: 20px;
+  top: 7px;
+  border: 2px red solid;
+}
+
+.pagination {
+  margin: 0px auto;
+}
+
+.pagination-style-three a {
+  padding: 5px 15px;
+  background: #ffffff;
+  color: #000;
+  border-radius: 25px;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s linear;
+}
+
+.pagination-style-three a.selected,
+.pagination-style-three a:hover,
+.pagination-style-three a:active,
+.pagination-style-three a:focus {
+  background: #ff1361;
+  color: #fff;
+}
+
+/*# sourceMappingURL=rank.css.map */

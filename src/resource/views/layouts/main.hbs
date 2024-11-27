@@ -1,0 +1,50 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/1be0d07f21.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/register.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/gamemode.css">
+    <link rel="stylesheet" href="/css/lobby.css">
+   
+</head>
+
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Tạo socket ở mọi trang
+        const socket = io();
+    </script>
+    {{> header}}
+    <section>
+        {{> sidebar}}
+
+        <main>
+            {{{body}}}
+        </main>
+        <div class="toast-container" id="toastContainer"></div>
+    </section>
+</body>
+<script src="/js/app.js"></script>
+<script>
+    // Sự kiện chung cho tất cả các trang
+    socket.on("Server__InviteFriend__Client", (invitation) => {
+        console.log(invitation)
+        // Hiển thị thông báo mời chơi
+        createMessageToast("infor", `${invitation.invitorName} mời bạn chơi cùng`, "", invitation.referer);
+    });
+    socket.on("Server__AddFriend__Client", (senderName, callback) => {
+        createMessageToast("infor", `${senderName} đã gửi yêu cầu kết bạn`, "", "addfriend")
+            .then(isAccepted => {
+                console.log("isAccepted:", isAccepted);
+                callback({ isAccepted: isAccepted });
+            });
+    });
+
+</script>
+
+</html>

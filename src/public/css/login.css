@@ -1,0 +1,81 @@
+.login{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#form-login {
+    width: 360px;
+    height: 226px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+#form-login>h2 {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    background: #F5F5F5;
+    border-radius: 5px 5px 0 0;
+    font-weight: 400;
+    font-size: 20px;
+    margin-top: 0;
+}
+
+#form-login .form-control-login {
+    height: 40px;
+    width: 318px;
+    position: relative;
+    margin-top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.form-control-login input {
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+.form-control-login input:focus{
+    border-color: #286090;
+}
+.form-control-login input:is(:focus, :valid) {
+    outline: none;
+    padding: 16px 20px 0;
+}
+
+.form-control-login label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555555;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.form-control-login input:is(:focus, :valid)~label {
+    font-size: 9px;
+    transform: translateY(-130%);
+}
+
+#btn-login {
+    width: 318px;
+    background: #286090;
+    padding: 8px 0;
+    color: #fff;
+    border-radius: 3px;
+    border: none;
+    margin-top: 16px;
+}
+
+#btn-login>i {
+    margin-right: 5px;
+}
+
+#btn-login:hover {
+    cursor: pointer;
+    background-color: #1a4e7d;
+}
